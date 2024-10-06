@@ -10,10 +10,10 @@ const userSchema = new Schema(
   { timestamps: true, versionKey: false },
 );
 
-// User.methods.toJSON = function () {
-//   const user = this.toObject();
-//   delete user.password;
-//   return user;
-// };
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  return user;
+};
 
 export const UsersCollection = model('users', userSchema);
