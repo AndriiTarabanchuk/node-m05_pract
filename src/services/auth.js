@@ -6,14 +6,15 @@ const ACCESS_TOKEN_LIVE = 1000 * 60 * 15; //15
 const refreshTokenValidUntil_TOKEN_LIVE = 1000 * 60 * 20; //15
 
 export const registerUser = async (payload) => {
-  // let user = await UsersCollection.findOne({ email: payload.email });
-  // if (user) {
-  //   throw createHttpError(409, 'user email this email already register');
-  // }
-  // const hashedPassword = await bcrypt.hash(payload.password, 10);
-
-  const user = await UsersCollection.create(payload);
-  return user;
+  let user = await UsersCollection.findOne({ email: payload.email }); // check unic email in base
+  if (user) {
+    throw createHttpError(409, 'This email already register');
+  }
+  const encryptedPassword = await bcrypt.hash(payload.password, 10); //adds-hesh-pass
+  return await UsersCollection.create({
+    ...payload,
+    password: encryptedPassword,
+  });
 };
 
 // export const loginUser = async (payload) => {
