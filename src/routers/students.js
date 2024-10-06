@@ -10,7 +10,6 @@ import {
 } from '../controllers/students.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { validateMongoIdParam } from '../../ignore/validateMongoIdParam.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { createStudentValidationSchema } from '../validation/createStudentValidationSchema.js';
 import { updateStudentValidationSchema } from '../validation/updateStudentValidationSchema.js';
