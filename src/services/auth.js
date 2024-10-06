@@ -2,8 +2,8 @@ import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
 import { UsersCollection } from '../db/models/user.js';
 
-const ACCESS_TOKEN_LIVE = 1000 * 60 * 15; //15
-const refreshTokenValidUntil_TOKEN_LIVE = 1000 * 60 * 20; //15
+// const ACCESS_TOKEN_LIVE = 1000 * 60 * 15; //15
+// const refreshTokenValidUntil_TOKEN_LIVE = 1000 * 60 * 20; //15
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unic email in base
