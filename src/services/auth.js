@@ -59,7 +59,7 @@ export const refreshUsersSessionService = async ({
   refreshToken,
 }) => {
   const session = await SessionsCollection.findOne({
-    _id: sessionId,qa
+    _id: sessionId,
     refreshToken,
   });
 
