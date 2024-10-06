@@ -5,3 +5,6 @@ export const ENV_VARS = {
   MONGODB_URL: 'MONGODB_URL',
   MONGODB_DB: 'MONGODB_DB',
 };
+
+export const ACCESS_TOKEN_LIVE = 1000 * 60 * 15; //15 min
+export const REFRESH_TOKEN_LIVE = 1000 * 60 * 60 * 24; //24 hour
