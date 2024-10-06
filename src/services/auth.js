@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { UsersCollection } from '../db/models/user.js';
 import { SessionsCollection } from '../db/models/session.js';
-import { ACCESS_TOKEN_LIVE, REFRESH_TOKEN_LIVE } from '../constants/index.js';
+import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/index.js';
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unic email in base
@@ -38,8 +38,8 @@ export const loginUserService = async (payload) => {
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_LIVE),
-    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_LIVE),
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
   });
 };
 
