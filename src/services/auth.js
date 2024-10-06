@@ -3,12 +3,15 @@ import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { UsersCollection } from '../db/models/user.js';
 import { SessionsCollection } from '../db/models/session.js';
-import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/index.js';
+import {
+  ACCESS_TOKEN_LIVE_TIME,
+  REFRESH_TOKEN_LIVE_TIME,
+} from '../constants/index.js';
 
 export const registerUserService = async (payload) => {
   let user = await UsersCollection.findOne({ email: payload.email }); // check unic email in base
   if (user) {
-    throw createHttpError(409, 'This user email already register!');
+    throw createHttpError(409, 'Email in use!');
   }
   const encryptedPassword = await bcrypt.hash(payload.password, 10); //adds-hesh-pass
 
@@ -38,9 +41,45 @@ export const loginUserService = async (payload) => {
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
+    accessTokenValidUntil: new Date(Date.now() + ACCESS_TOKEN_LIVE_TIME),
+    refreshTokenValidUntil: new Date(Date.now() + REFRESH_TOKEN_LIVE_TIME),
   });
 };
 
-// export const logoutUser = async (req, res) => {};
+export const logoutUserService = async (sessionId, sessionToken) => {
+  // console.log({ sessionId, sessionToken });
+  await SessionsCollection.deleteOne({
+    _id: sessionId,
+    refreshToken: sessionToken,
+  });
+};
+
+export const refreshUsersSessionService = async ({
+  sessionId,
+  refreshToken,
+}) => {
+  const session = await SessionsCollection.findOne({
+    _id: sessionId,qa
+    refreshToken,
+  });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  const newSession = createSession();
+
+  await SessionsCollection.deleteOne({ _id: sessionId, refreshToken });
+
+  return await SessionsCollection.create({
+    userId: session.userId,
+    ...newSession,
+  });
+};

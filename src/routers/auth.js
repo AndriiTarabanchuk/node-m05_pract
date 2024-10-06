@@ -2,8 +2,9 @@ import { Router } from 'express';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   loginUserController,
+  logoutUserController,
+  refreshUserSessionController,
   registerUserController,
-  // loguotUserController,
 } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import {
@@ -18,13 +19,14 @@ authRouter.post(
   validateBody(registerUserValidSchema),
   ctrlWrapper(registerUserController),
 );
+
 authRouter.post(
   '/login',
   validateBody(loginUserValidSchema),
   ctrlWrapper(loginUserController),
 );
-// authRouter.post('/login');
-// authRouter.post('/logout', ctrlWrapper(loguotUserController));
-// authRouter.post('/refresh-session');
 
+authRouter.post('/logout', ctrlWrapper(logoutUserController));
+
+authRouter.post('/refresh-session', ctrlWrapper(refreshUserSessionController));
 export default authRouter;
