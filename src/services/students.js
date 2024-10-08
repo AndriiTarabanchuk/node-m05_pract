@@ -1,5 +1,5 @@
 import createHttpError from 'http-errors';
-import { Student } from '../db/models/student.js';
+import { StudentsCollection } from '../db/models/student.js';
 import { createPaginationData } from '../utils/createPagination.js';
 
 export const getAllStudents = async ({
@@ -10,7 +10,7 @@ export const getAllStudents = async ({
   filter = {},
 }) => {
   const skip = (page - 1) * perPage;
-  const studentsQuery = Student.find();
+  const studentsQuery = StudentsCollection.find();
 
   if (filter.minAge) {
     studentsQuery.where('age').gte(filter.minAge);
@@ -37,8 +37,8 @@ export const getAllStudents = async ({
   }
 
   const [count, students] = await Promise.all([
-    Student.find().merge(studentsQuery).countDocuments(),
-    Student.find()
+    StudentsCollection.find().merge(studentsQuery).countDocuments(),
+    StudentsCollection.find()
       .merge(studentsQuery)
       .skip(skip)
       .limit(perPage)
@@ -54,7 +54,7 @@ export const getAllStudents = async ({
 };
 
 export const getStudentById = async (id) => {
-  const student = await Student.findById(id);
+  const student = await StudentsCollection.findById(id);
 
   if (!student) {
     throw createHttpError(404, {
@@ -67,11 +67,11 @@ export const getStudentById = async (id) => {
 };
 
 export const createStudent = async (payload) => {
-  return await Student.create(payload);
+  return await StudentsCollection.create(payload);
 };
 
 export const updateStudent = async (id, payload, options = {}) => {
-  const rawResult = await Student.findByIdAndUpdate(id, payload, {
+  const rawResult = await StudentsCollection.findByIdAndUpdate(id, payload, {
     new: true,
     includeResultMetadata: true,
     ...options,
@@ -91,5 +91,5 @@ export const updateStudent = async (id, payload, options = {}) => {
 };
 
 export const deleteStudentById = async (id) => {
-  await Student.findByIdAndDelete(id);
+  await StudentsCollection.findByIdAndDelete(id);
 };
