@@ -29,4 +29,5 @@ authRouter.post(
 authRouter.post('/logout', ctrlWrapper(logoutUserController));
 
 authRouter.post('/refresh-session', ctrlWrapper(refreshUserSessionController));
+
 export default authRouter;

@@ -31,6 +31,7 @@ export const startServer = () => {
       message: 'Hello world. You can get list /students or anything else',
     });
   });
+
   app.use(router);
 
   app.use(notFoundAnythingMiddleware);
@@ -38,6 +39,7 @@ export const startServer = () => {
   app.use(errorHandlerMiddleware);
 
   const PORT = env(ENV_VARS.PORT, 3000);
+
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}!`);
   });

@@ -28,7 +28,7 @@ const setupSession = (res, session) => {
   });
   res.cookie('sessionToken', session.refreshToken, {
     httpOnly: true,
-    expires: new Date(Date.now() + ACCESS_TOKEN_LIVE_TIME),
+    expires: new Date(Date.now() + REFRESH_TOKEN_LIVE_TIME),
   });
 };
 
