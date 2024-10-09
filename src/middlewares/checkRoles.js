@@ -1,28 +1,3 @@
-// import createHttpError from 'http-errors';
-
-// export const checkRoles =
-//   (...roles) =>
-//   async (res, req, next) => {
-//     const userRole = req.user.role;
-//     if (userRole === 'teacher' && roles.includes('teacher')) {
-//       return next();
-//     }
-//     if (userRole === 'parent' && roles.includes('parent')) {
-//       const student = await Student.findOne({
-//         _id: req.params.studentId,
-//         parentId: req.user._id,
-//       });
-//       // const student = await Student.findOne({req.params.studentId})
-//       if (!student) {
-//         return next(
-//           createHttpError(403, 'User dont hve access to such student!'),
-//         );
-//       }
-//       return next();
-//     }
-//     return next(createHttpError(403, 'Forbidden'));
-//   };
-
 import createHttpError from 'http-errors';
 import { ROLES } from '../constants/index.js';
 import { StudentsCollection } from '../db/models/student.js';
@@ -30,35 +5,23 @@ import { StudentsCollection } from '../db/models/student.js';
 export const checkRoles =
   (...roles) =>
   async (req, res, next) => {
-    const { user } = req;
-    if (!user) {
-      next(createHttpError(401, 'Not founD role!'));
-      return;
+    const userRole = req.user?.role;
+    if (!userRole) {
+      return next();
+    }
+    if (roles.includes(ROLES.TEACHER) && userRole === ROLES.TEACHER) {
+      return next();
     }
 
-    const { role } = user;
-    if (roles.includes(ROLES.TEACHER) && role === ROLES.TEACHER) {
-      next();
-      return;
-    }
-
-    if (roles.includes(ROLES.PARENT) && role === ROLES.PARENT) {
-      const { studentId } = req.params;
-      if (!studentId) {
-        next(createHttpError(403, 'Forbidden!'));
-        return;
+    if (roles.includes(ROLES.PARENT) && userRole === ROLES.PARENT) {
+      const studentId = await StudentsCollection.findById(req.params.studentId);
+      if (!studentId || req.user._id.equals(student.parentId)) {
+        return next(
+          createHttpError(403, 'User does not have access to such student!'),
+        );
       }
 
-      const student = await StudentsCollection.findOne({
-        _id: studentId,
-        parentId: user._id,
-      });
-
-      if (student) {
-        next();
-        return;
-      }
+      return next();
     }
-
-    next(createHttpError(403, 'Forbidden!'));
+    return next(createHttpError(403, 'Forbidden!'));
   };
